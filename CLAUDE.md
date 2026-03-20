@@ -1,43 +1,56 @@
-# CLAUDE.MD -- Academic Project Development with Claude Code
+# CLAUDE.md — AI and Human Capital in Developing Countries
 
-<!-- HOW TO USE: Replace [BRACKETED PLACEHOLDERS] with your project info.
-     Customize Beamer environments and CSS classes for your theme.
-     Keep this file under ~150 lines — Claude loads it every session.
-     See the guide at docs/workflow-guide.html for full documentation. -->
-
-**Project:** [YOUR PROJECT NAME]
-**Institution:** [YOUR INSTITUTION]
+**Project:** AI and Human Capital in Developing Countries
+**Institution:** World Bank
+**Output:** Research paper (written in Google Docs)
 **Branch:** main
 
 ---
 
 ## Core Principles
 
-- **Plan first** -- enter plan mode before non-trivial tasks; save plans to `quality_reports/plans/`
-- **Verify after** -- compile/render and confirm output at the end of every task
-- **Single source of truth** -- Beamer `.tex` is authoritative; Quarto `.qmd` derives from it
-- **Quality gates** -- nothing ships below 80/100
-- **[LEARN] tags** -- when corrected, save `[LEARN:category] wrong → right` to MEMORY.md
+- **Plan first** — enter plan mode before non-trivial tasks; save plans to `quality_reports/plans/`
+- **Verify after** — run scripts and confirm outputs at the end of every task
+- **Single source of truth** — Google Doc is authoritative for prose; `figures/scripts/` is authoritative for all figures
+- **Quality gates** — nothing ships below 80/100; all figures must be publication-ready
+- **[LEARN] tags** — when corrected, save `[LEARN:category] wrong → right` to MEMORY.md
+
+---
+
+## Paper Overview
+
+**Title:** Hope or Hype: Can AI Boost Human Capital in the Global South?
+**Author:** Gabriel Demombynes
+**Focus:** Original research (RCTs, causal studies); working papers and preprints included; education + health in LMICs
+**Writing surface:** Google Docs
+**Figures:** Python (matplotlib/seaborn), exported as PNG (300 dpi) + PDF
+**Bibliography:** `Bibliography_base.bib`
+
+**Google Doc:** https://docs.google.com/document/d/1vxr1U4iYvJLHHY79yxkjhWzocXinKGmJKDDsD3Ayci0/edit?usp=sharing
 
 ---
 
 ## Folder Structure
 
 ```
-[YOUR-PROJECT]/
-├── CLAUDE.MD                    # This file
+aihumancapital/
+├── CLAUDE.md                    # This file
 ├── .claude/                     # Rules, skills, agents, hooks
 ├── Bibliography_base.bib        # Centralized bibliography
-├── Figures/                     # Figures and images
-├── Preambles/header.tex         # LaTeX headers
-├── Slides/                      # Beamer .tex files
-├── Quarto/                      # RevealJS .qmd files + theme
-├── docs/                        # GitHub Pages (auto-generated)
-├── scripts/                     # Utility scripts + R code
+├── literature/
+│   ├── raw/                     # Downloaded PDFs of source papers
+│   └── summaries/               # Structured notes per paper (markdown)
+├── figures/
+│   ├── scripts/                 # Python scripts (one per figure)
+│   └── output/                  # PNG + PDF outputs (gitignored if large)
+├── paper/                       # Local markdown drafts / exported Google Doc snapshots
+├── data/                        # Raw and processed datasets
 ├── quality_reports/             # Plans, session logs, merge reports
+│   ├── plans/
+│   ├── session_logs/
+│   └── specs/
 ├── explorations/                # Research sandbox (see rules)
-├── templates/                   # Session log, quality report templates
-└── master_supporting_docs/      # Papers and existing slides
+└── templates/                   # Session log, quality report templates
 ```
 
 ---
@@ -45,17 +58,17 @@
 ## Commands
 
 ```bash
-# LaTeX (3-pass, XeLaTeX only)
-cd Slides && TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
-BIBINPUTS=..:$BIBINPUTS bibtex file
-TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
-TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
+# Run a Python figure script
+python figures/scripts/figure_name.py
 
-# Deploy Quarto to GitHub Pages
-./scripts/sync_to_docs.sh LectureN
+# Run all figure scripts
+for f in figures/scripts/*.py; do python "$f"; done
 
-# Quality score
-python scripts/quality_score.py Quarto/file.qmd
+# Validate bibliography citations
+# (use /validate-bib skill)
+
+# Check PDF paper (split for processing)
+pdfinfo paper.pdf | grep "Pages:"
 ```
 
 ---
@@ -65,8 +78,8 @@ python scripts/quality_score.py Quarto/file.qmd
 | Score | Gate | Meaning |
 |-------|------|---------|
 | 80 | Commit | Good enough to save |
-| 90 | PR | Ready for deployment |
-| 95 | Excellence | Aspirational |
+| 90 | PR | Ready for sharing/deployment |
+| 95 | Excellence | Aspirational; required for figures in final paper |
 
 ---
 
@@ -74,63 +87,46 @@ python scripts/quality_score.py Quarto/file.qmd
 
 | Command | What It Does |
 |---------|-------------|
-| `/compile-latex [file]` | 3-pass XeLaTeX + bibtex |
-| `/deploy [LectureN]` | Render Quarto + sync to docs/ |
-| `/extract-tikz [LectureN]` | TikZ → PDF → SVG |
-| `/proofread [file]` | Grammar/typo/overflow review |
-| `/visual-audit [file]` | Slide layout audit |
-| `/pedagogy-review [file]` | Narrative, notation, pacing review |
-| `/review-r [file]` | R code quality review |
-| `/qa-quarto [LectureN]` | Adversarial Quarto vs Beamer QA |
-| `/slide-excellence [file]` | Combined multi-agent review |
-| `/translate-to-quarto [file]` | Beamer → Quarto translation |
-| `/validate-bib` | Cross-reference citations |
-| `/devils-advocate` | Challenge slide design |
-| `/create-lecture` | Full lecture creation |
+| `/lit-review [topic]` | Structured literature search + synthesis |
+| `/interview-me [topic]` | Interactive research interview to formalize ideas |
+| `/research-ideation [topic]` | Generate hypotheses + empirical strategies |
+| `/review-paper [file]` | Comprehensive manuscript review |
+| `/proofread [file]` | Grammar/typo/clarity review |
+| `/data-analysis [dataset]` | End-to-end analysis workflow |
+| `/validate-bib` | Cross-reference citations vs bibliography |
 | `/commit [msg]` | Stage, commit, PR, merge |
-| `/lit-review [topic]` | Literature search + synthesis |
-| `/research-ideation [topic]` | Research questions + strategies |
-| `/interview-me [topic]` | Interactive research interview |
-| `/review-paper [file]` | Manuscript review |
-| `/data-analysis [dataset]` | End-to-end R analysis |
 | `/learn [skill-name]` | Extract discovery into persistent skill |
 | `/context-status` | Show session health + context usage |
 | `/deep-audit` | Repository-wide consistency audit |
 
 ---
 
-<!-- CUSTOMIZE: Replace the example entries below with your own
-     Beamer environments and Quarto CSS classes. These are examples
-     from the original project — delete them and add yours. -->
+## Python Figure Standards
 
-## Beamer Custom Environments
+All figures must follow these conventions (enforced by `.claude/rules/python-figures.md`):
 
-| Environment       | Effect        | Use Case       |
-|-------------------|---------------|----------------|
-| `[your-env]`      | [Description] | [When to use]  |
-
-<!-- Example entries (delete and replace with yours):
-| `keybox` | Gold background box | Key points |
-| `highlightbox` | Gold left-accent box | Highlights |
-| `definitionbox[Title]` | Blue-bordered titled box | Formal definitions |
--->
-
-## Quarto CSS Classes
-
-| Class              | Effect        | Use Case       |
-|--------------------|---------------|----------------|
-| `[.your-class]`    | [Description] | [When to use]  |
-
-<!-- Example entries (delete and replace with yours):
-| `.smaller` | 85% font | Dense content slides |
-| `.positive` | Green bold | Good annotations |
--->
+| Requirement | Standard |
+|-------------|----------|
+| Style | `seaborn-v0_8-whitegrid` or `seaborn-v0_8-paper` |
+| Resolution | 300 dpi for PNG; PDF always included |
+| Output paths | `figures/output/figure_name.png` + `.pdf` |
+| Reproducibility | `np.random.seed()` / `random.seed()` if stochastic |
+| No hardcoded paths | Use `Path(__file__).parent` for script-relative paths |
 
 ---
 
-## Current Project State
+## Paper Structure Tracker
 
-| Lecture | Beamer | Quarto | Key Content |
-|---------|--------|--------|-------------|
-| 1: [Topic] | `Lecture01_Topic.tex` | `Lecture1_Topic.qmd` | [Brief description] |
-| 2: [Topic] | `Lecture02_Topic.tex` | -- | [Brief description] |
+| Section | Status | Notes |
+|---------|--------|-------|
+| 1. Introduction | Draft | Needs quotes on AI power; OLPC framing good |
+| 2. Conceptual Framework | Draft | Direct provision vs. augmentation; enabling factors (electricity, internet, devices, expertise, institutions) |
+| 3. Evidence — Education | Draft | 3 GenAI studies: Sierra Leone (Choi), Ghana/Rori (Henkel), Nigeria (De Simone) |
+| 3. Evidence — Health | Draft | Diagnostics, imaging, maternal health, health systems; many sub-sections |
+| 3. Evidence — Mental Health | Placeholder | Flagged for "deep research review" |
+| 3. Evidence — Livelihoods | Placeholder | Uganda, Philippines examples noted |
+| 4. Perils | Outline only | Effort reduction, distraction, misinformation, bias, privacy |
+| 5. Research Agenda | Outline only | 4 bullet points |
+| 6. Policy Pathways | Outline only | 3 bullet points |
+| 7. Conclusion | Not started | |
+| Figures | Planned | Electricity access, internet access, device ownership |
